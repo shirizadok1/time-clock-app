@@ -1,10 +1,10 @@
 import React from "react";
 import "./App.css";
-import Header from "./components/Header";
+import AppRoutes from "./routing/AppRoutes";
 
 const App = () => {
   return <div className="App">
-    <Header />
+    <AppRoutes />
   </div>
 };
 
