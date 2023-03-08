@@ -1,41 +1,46 @@
-/* employer-dash.css */
-.container {
-    max-width: 800px;
-    margin: 0 auto;
+/* Button styles */
+button {
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 5px;
   }
   
+  /* Hover state */
+  button:hover {
+    opacity: 0.8;
+  }
+  
+  /* Text styles */
   h1 {
-    font-size: 30px;
-    margin-top: 10px;
-    margin-bottom: 10px;
+    font-size: 32px;
+    font-weight: bold;
+    text-align: center;
+    color: #333;
+    margin-top: 20px;
   }
   
   h2 {
-    font-size: 20px;
+    font-size: 28px;
+    font-weight: bold;
+    text-align: center;
+    color: #333;
+    margin-top: 20px;
+  }
+  
+  p {
+    font-size: 16px;
+    line-height: 1.5;
+    color: #666;
     margin-top: 10px;
     margin-bottom: 10px;
   }
   
-  ul {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-  }
   
-  li {
-    margin-bottom: 10px;
-  }
-  
-  button {
-    margin-right: 10px;
-    margin-bottom: 10px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 40px;
-    cursor: pointer;
-  }
-  
-  button:hover {
-    background-color: #849db7;
-  }

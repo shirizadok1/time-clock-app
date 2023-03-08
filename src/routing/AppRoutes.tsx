@@ -8,7 +8,7 @@ const AppRoutes = () => {
   return (
     <Router>
       <Switch>
-        <Route path="/" component={Header} />
+        <Route exact path="/" component={Header} />
         <Route path="/Employee" component={Employee} />
         <Route path="/Employer" component={Employer} />
       </Switch>

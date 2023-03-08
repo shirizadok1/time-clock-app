@@ -1,9 +1,18 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
+interface Employee {
+  id: string;
+  name: string;
+  hours: { date: string; start: string; end: string }[];
+}
+
 const EmployerDash = () => {
-  const [employees, setEmployees] = useState([]);
-  const [newEmployee, setNewEmployee] = useState({ name: "", monthlyHours: 0 });
+  const [employees, setEmployees] = useState<Employee[]>([]);
+  const [newEmployee, setNewEmployee] = useState({
+    name: "",
+    monthlyHours: 0,
+  });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -19,10 +28,13 @@ const EmployerDash = () => {
     fetchData();
   }, []);
 
-  const handleNewEmployeeSubmit = async (event) => {
-    event.preventDefault()
+  const handleNewEmployeeSubmit = async (
+    event: React.FormEvent<HTMLFormElement>
+  ) => {
+    event.preventDefault();
 
     const newEmployee = {
+      id: Math.floor(Math.random() * 1000).toString(),
       name: "New Employee",
       hours: [],
     };
@@ -31,7 +43,7 @@ const EmployerDash = () => {
 
     localStorage.setItem("employees", JSON.stringify(updatedEmployees));
     setEmployees(updatedEmployees);
-    console.log(employees);
+    console.log(updatedEmployees);
   };
 
   return (
@@ -47,17 +59,18 @@ const EmployerDash = () => {
         </thead>
         <tbody>
           {employees.map((employee) => {
-            let totalHours = 0;
-            employee.hours.forEach((day) => {
-              totalHours += parseFloat(day.end) - parseFloat(day.start);
-            });
+            const totalHours = employee.hours.reduce((acc, day) => {
+              const hoursWorked = parseFloat(day.end) - parseFloat(day.start);
+              return acc + hoursWorked;
+            }, 0);
+
             return (
               <tr key={employee.id}>
                 <td>{employee.name}</td>
                 <td>
                   {employee.hours.map((day) => (
                     <div>
-                      {day.date}: {day.start} - {day.stop}
+                      {day.date}: {day.start} - {day.end}
                     </div>
                   ))}
                 </td>
