@@ -1,17 +1,32 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
+interface Report {
+  id: number;
+  name: string;
+  hours: Array<{
+    date: Date;
+    start?: Date;
+    end?: Date;
+  }>;
+}
+
 const EmployeeDash = () => {
-  const [startTime, setStartTime] = useState(new Date());
-  const [stopTime, setStopTime] = useState(new Date());
-  const [monthlyReport, setMonthlyReport] = useState([{ id: 0, name: "", hours: [] }]);
+  const [startTime, setStartTime] = useState<Date | null>(null);
+  const [stopTime, setStopTime] = useState<Date | null>(null);
+  const [monthlyReport, setMonthlyReport] = useState<Report[]>([]);
   const [showReport, setShowReport] = useState(false);
 
   useEffect(() => {
-    axios
-      .get('api/data.json')
-      .then((res) => setMonthlyReport(res.data.data))
-      .catch((err) => console.log(err));
+    const monthlyReportFromStorage = localStorage.getItem('monthlyReport');
+    if (monthlyReportFromStorage) {
+      setMonthlyReport(JSON.parse(monthlyReportFromStorage));
+    } else {
+      axios
+        .get<Report[]>('/api/data.json')
+        .then((res) => setMonthlyReport(res.data))
+        .catch((err) => console.log(err));
+    }
   }, []);
 
   const handleStartEdit = (reportIndex: number, dayIndex: number) => {
@@ -20,14 +35,13 @@ const EmployeeDash = () => {
     localStorage.setItem('monthlyReport', JSON.stringify(updatedMonthlyReport));
     setMonthlyReport(updatedMonthlyReport);
   };
-  
+
   const handleStopEdit = (reportIndex: number, dayIndex: number) => {
     const updatedMonthlyReport = [...monthlyReport];
     updatedMonthlyReport[reportIndex].hours[dayIndex].end = new Date();
     localStorage.setItem('monthlyReport', JSON.stringify(updatedMonthlyReport));
     setMonthlyReport(updatedMonthlyReport);
   };
-  
 
   const isStopDisabled = !startTime;
 
@@ -46,17 +60,12 @@ const EmployeeDash = () => {
           <p>Stop Time: {stopTime.toLocaleString()}</p>
         </div>
       ) : (
-        <button
-          onClick={() => setStopTime(new Date())}
-          disabled={isStopDisabled}
-        >
+        <button onClick={() => setStopTime(new Date())} disabled={isStopDisabled}>
           Stop Clock
         </button>
       )}
 
-      <button onClick={() => setShowReport(!showReport)}>
-        View Monthly Report
-      </button>
+      <button onClick={() => setShowReport(!showReport)}>View Monthly Report</button>
 
       {showReport && (
         <div>
@@ -66,75 +75,23 @@ const EmployeeDash = () => {
               <li key={report.id}>
                 <h3>{report.name}</h3>
                 <ul>
-                  {report.hours.map(
-                    (
-                      day: {
-                        date:
-                          | boolean
-                          | React.Key
-                          | React.ReactElement<
-                              any,
-                              string | React.JSXElementConstructor<any>
-                            >
-                          | React.ReactFragment
-                          | null
-                          | undefined;
-                        start: {
-                          toLocaleString: () =>
-                            | string
-                            | number
-                            | boolean
-                            | React.ReactElement<
-                                any,
-                                string | React.JSXElementConstructor<any>
-                              >
-                            | React.ReactFragment
-                            | React.ReactPortal
-                            | null
-                            | undefined;
-                        };
-                        end: {
-                          toLocaleString: () =>
-                            | string
-                            | number
-                            | boolean
-                            | React.ReactElement<
-                                any,
-                                string | React.JSXElementConstructor<any>
-                              >
-                            | React.ReactFragment
-                            | React.ReactPortal
-                            | null
-                            | undefined;
-                        };
-                      },
-                      dayIndex: string | number
-                    ) => (
-                      <li key={day.date}>
-                        {day.date}:{' '}
-                        {day.start ? day.start.toLocaleString() : '-'} -{' '}
-                        {day.end ? day.end.toLocaleString() : '-'}{' '}
-                        {day.start && (
-                          <button
-                            onClick={() =>
-                              handleStartEdit(reportIndex, dayIndex)
-                            }
-                          >
-                            Edit Start
-                          </button>
-                        )}
-                        {day.end && (
-                          <button
-                            onClick={() =>
-                              handleStopEdit(reportIndex, dayIndex)
-                            }
-                          >
-                            Edit End
-                          </button>
-                        )}
-                      </li>
-                    )
-                  )}
+                  {report.hours.map((day, dayIndex) => (
+                    <li key={day.date.getTime()}>
+                      {day.date.toLocaleDateString()}:{' '}
+                      {day.start ? day.start.toLocaleTimeString() : '-'} -{' '}
+                      {day.end ? day.end.toLocaleTimeString() : '-'}{' '}
+                      {day.start && (
+                        <button onClick={() => handleStartEdit(reportIndex, dayIndex)}>
+                          Edit Start
+                        </button>
+                      )}
+                      {day.end && (
+                        <button onClick={() => handleStopEdit(reportIndex, dayIndex)}>
+                          Edit End
+                        </button>
+                      )}
+                    </li>
+                  ))}
                 </ul>
               </li>
             ))}
