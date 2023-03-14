@@ -7,10 +7,10 @@ import Header from '../components/Header';
 const AppRoutes = () => {
   return (
     <Router>
-      <Header />
       <Routes>
-        <Route path="/employee" element={<EmployeeDash />} />
-        <Route path="/employer" element={<EmployerDash />} />
+        <Route path="/" element={<Header />} />
+        <Route path="employee/" element={<EmployeeDash />} />
+        <Route path="employer/" element={<EmployerDash />} />
       </Routes>
     </Router>
   );
